@@ -15,7 +15,7 @@
 /**
  * Adds a random greeting to the page.
  */
- document.getElementById("ticButton").addEventListener("click",initTic);
+document.getElementById("ticButton").addEventListener("click",initTic);
 function addRandomGreeting() {
   const greetings =
       ['Balabizo', 'Educated Noodle', 'That\'s rough buddy', 'YNWA'];
@@ -28,10 +28,10 @@ function addRandomGreeting() {
   greetingContainer.innerText = greeting;
 }
 let turn;
+//initializes the Tic-Tac-Toe Grid
 function initTic(){
   turn = 'X';
   var tic = document.getElementById("tic");
-  tic.appendChild(document.createTextNode("AAAA"));
   var paper = document.createElement("div");
   paper.classList.add("paper");
   tic.appendChild(paper);
@@ -42,16 +42,15 @@ function initTic(){
     checkGrid[i] = [];
     for(var j=0;j<3;j++){
       boxGrid[i][j] = document.createElement("div");
-     
       boxGrid[i][j].classList.add("box");
       boxGrid[i][j].style.fontSize = "20px";
       boxGrid[i][j].myRow=i;
       boxGrid[i][j].myColumn=j;
-      
       boxGrid[i][j].addEventListener("click",play);
       paper.appendChild(boxGrid[i][j]);
     }
   }
+  //puts X or O on the cell when it's clicked
   function play() {
     var i = this.myRow;
     var j = this.myColumn;
