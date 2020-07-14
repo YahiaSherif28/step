@@ -7,3 +7,14 @@
 #greeting-container {
   margin-top: 20px;
 }
+.paper{
+  display:grid;
+  grid-template-rows: 50px 50px 50px;
+  grid-template-columns:50px 50px 50px;
+  gap : 10px;
+}
+.box{
+  background-color:grey;
+  width : 50px;
+  height : 50px;
+}

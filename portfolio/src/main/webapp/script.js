@@ -15,6 +15,7 @@
 /**
  * Adds a random greeting to the page.
  */
+document.getElementById("ticButton").addEventListener("click",initTic);
 function addRandomGreeting() {
   const greetings =
       ['Balabizo', 'Educated Noodle', 'That\'s rough buddy', 'YNWA'];
@@ -25,4 +26,41 @@ function addRandomGreeting() {
   // Add it to the page.
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = greeting;
+}
+let turn;
+//initializes the Tic-Tac-Toe Grid
+function initTic(){
+  turn = 'X';
+  var tic = document.getElementById("tic");
+  var paper = document.createElement("div");
+  paper.classList.add("paper");
+  tic.appendChild(paper);
+  var boxGrid = Array(3).fill(Array(3).fill(""));
+  var checkGrid = Array(3).fill(Array(3).fill(""));
+  for(var i=0;i<3;i++){
+    boxGrid[i]=[];
+    checkGrid[i] = [];
+    for(var j=0;j<3;j++){
+      boxGrid[i][j] = document.createElement("div");
+      boxGrid[i][j].classList.add("box");
+      boxGrid[i][j].style.fontSize = "20px";
+      boxGrid[i][j].myRow=i;
+      boxGrid[i][j].myColumn=j;
+      boxGrid[i][j].addEventListener("click",play);
+      paper.appendChild(boxGrid[i][j]);
+    }
+  }
+  //puts X or O on the cell when it's clicked
+  function play() {
+    var i = this.myRow;
+    var j = this.myColumn;
+    if(checkGrid[i][j]!='X' && checkGrid[i][j]!='O' ){
+      checkGrid[i][j]=turn;
+      boxGrid[i][j].appendChild(document.createTextNode(turn));
+      turn = (turn ==='O'?'X':'O');
+    }
+  }
+  
+  
+  this.remove();
 }
