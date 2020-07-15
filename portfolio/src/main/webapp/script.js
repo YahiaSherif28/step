@@ -27,40 +27,84 @@ function addRandomGreeting() {
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = greeting;
 }
-let turn;
-//initializes the Tic-Tac-Toe Grid
-function initTic(){
-  turn = 'X';
-  var tic = document.getElementById("tic");
-  var paper = document.createElement("div");
-  paper.classList.add("paper");
+
+// initializes the Tic-Tac-Toe Grid, triggered by both the play and reset buttons
+function initTic() {
+  let turn = 'X';
+  let tic  = document.getElementById('tic');
+  let paper = document.createElement('div');
+  paper.classList.add('paper');
   tic.appendChild(paper);
-  var boxGrid = Array(3).fill(Array(3).fill(""));
-  var checkGrid = Array(3).fill(Array(3).fill(""));
-  for(var i=0;i<3;i++){
-    boxGrid[i]=[];
-    checkGrid[i] = [];
-    for(var j=0;j<3;j++){
-      boxGrid[i][j] = document.createElement("div");
-      boxGrid[i][j].classList.add("box");
-      boxGrid[i][j].style.fontSize = "20px";
-      boxGrid[i][j].myRow=i;
-      boxGrid[i][j].myColumn=j;
-      boxGrid[i][j].addEventListener("click",play);
+  let boxGrid = [];
+  let winnerMessage = null;
+  let resetButton = null;
+
+  // filling the tic-tac-toe grid
+  for (let i=0; i<3; i++) {
+    boxGrid[i] = [];
+    for (let j=0; j<3; j++) {
+      boxGrid[i][j] = document.createElement('div');
+      boxGrid[i][j].classList.add('box');
+      boxGrid[i][j].style.fontSize = '50px';
+      boxGrid[i][j].myRow = i;
+      boxGrid[i][j].myColumn = j;
+      boxGrid[i][j].checked = null;
+      boxGrid[i][j].addEventListener('click', play);
       paper.appendChild(boxGrid[i][j]);
     }
   }
-  //puts X or O on the cell when it's clicked
+  // removing button that clicked it then adding reset button
+  this.remove();
+  resetButton = document.createElement('button');
+  resetButton.innerHTML = 'Reset';
+  resetButton.addEventListener('click', reset);
+  resetButton.addEventListener('click', initTic);
+  tic.appendChild(resetButton);
+
+  // puts X or O on the cell when it's clicked
   function play() {
-    var i = this.myRow;
-    var j = this.myColumn;
-    if(checkGrid[i][j]!='X' && checkGrid[i][j]!='O' ){
-      checkGrid[i][j]=turn;
-      boxGrid[i][j].appendChild(document.createTextNode(turn));
-      turn = (turn ==='O'?'X':'O');
+    //this represents the clicked div object
+    let i = this.myRow;
+    let j = this.myColumn;
+    
+    if(this.checked === null){
+      this.checked = turn;
+      this.appendChild(document.createTextNode(turn));
+      
+      if(isGameOver(this)) {
+        gameOver(turn);
+      }
+      turn = (turn === 'O' ? 'X' : 'O');
+    }
+
+    // checking if the row or column or diagonal is full and is the same symbol
+    function isGameOver(changedCell) {
+      if(changedCell.checked === boxGrid[i][(j + 1) % 3].checked && changedCell.checked === boxGrid[i][(j + 2) % 3].checked) {
+        return true;
+      } else if(changedCell.checked === boxGrid[(i + 1) % 3][j].checked && changedCell.checked === boxGrid[(i + 2) % 3][j].checked) {
+        return true;
+      } else if(boxGrid[0][0].checked !== null && boxGrid[0][0].checked === boxGrid[1][1].checked && boxGrid[0][0].checked === boxGrid[2][2].checked) {
+        return true;
+      } else if(boxGrid[0][2].checked !== null && boxGrid[0][2].checked === boxGrid[1][1].checked && boxGrid[0][2].checked === boxGrid[2][0].checked) {
+        return true;
+      }
+      return false;
+    }
+
+    function gameOver(symbol) {
+      paper.remove();
+      winnerMessage = document.createElement("p").appendChild(document.createTextNode(`The ${symbol} player wins`));
+      tic.appendChild(winnerMessage);
     }
   }
   
-  
-  this.remove();
+  // removes the winner message and the grid to setup another turn, 
+  // reset button has another eventlistener calling the initTic function exactly after calling reset
+  function reset() {
+    if(winnerMessage !== null) 
+      winnerMessage.remove();
+    paper.remove();
+  }
 }
+ 
+
