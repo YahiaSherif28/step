@@ -28,60 +28,67 @@ function addRandomGreeting() {
   greetingContainer.innerText = greeting;
 }
 
-//initializes the Tic-Tac-Toe Grid, triggered by both the play and reset buttons
-function initTic(){
+// initializes the Tic-Tac-Toe Grid, triggered by both the play and reset buttons
+function initTic() {
   let turn = 'X';
-  let tic  = document.getElementById("tic");
-  let paper = document.createElement("div");
-  paper.classList.add("paper");
+  let tic  = document.getElementById('tic');
+  let paper = document.createElement('div');
+  paper.classList.add('paper');
   tic.appendChild(paper);
-  let boxGrid =[];
+  let boxGrid = [];
   let winnerMessage = null;
   let resetButton = null;
 
-  //filling the tic-tac-toe grid
-  for(let i=0;i<3;i++){
-    boxGrid[i]=[];
-    for(let j=0;j<3;j++){
-      boxGrid[i][j] = document.createElement("div");
-      boxGrid[i][j].classList.add("box");
-      boxGrid[i][j].style.fontSize = "50px";
-      boxGrid[i][j].myRow=i;
-      boxGrid[i][j].myColumn=j;
+  // filling the tic-tac-toe grid
+  for (let i=0; i<3; i++) {
+    boxGrid[i] = [];
+    for (let j=0; j<3; j++) {
+      boxGrid[i][j] = document.createElement('div');
+      boxGrid[i][j].classList.add('box');
+      boxGrid[i][j].style.fontSize = '50px';
+      boxGrid[i][j].myRow = i;
+      boxGrid[i][j].myColumn = j;
       boxGrid[i][j].checked = null;
-      boxGrid[i][j].addEventListener("click",play);
+      boxGrid[i][j].addEventListener('click', play);
       paper.appendChild(boxGrid[i][j]);
     }
   }
-  //removing button that clicked it then adding reset button
+  // removing button that clicked it then adding reset button
   this.remove();
-  resetButton = document.createElement("button");
-  resetButton.innerHTML = "Reset";
-  resetButton.addEventListener("click",reset);
-  resetButton.addEventListener("click",initTic);
+  resetButton = document.createElement('button');
+  resetButton.innerHTML = 'Reset';
+  resetButton.addEventListener('click', reset);
+  resetButton.addEventListener('click', initTic);
   tic.appendChild(resetButton);
 
-//puts X or O on the cell when it's clicked
+  // puts X or O on the cell when it's clicked
   function play() {
     //this represents the clicked div object
     let i = this.myRow;
     let j = this.myColumn;
     
     if(this.checked === null){
-      this.checked= turn ==='O'?'O':'X';
+      this.checked = turn;
       this.appendChild(document.createTextNode(turn));
-
-      // checking if the row or column or diagonal is full and is the same symbol
-      if(this.checked === boxGrid[i][(j+1)%3].checked && this.checked === boxGrid[i][(j+2)%3].checked){
-        gameOver(turn);
-      } else if(this.checked === boxGrid[(i+1)%3][j].checked && this.checked === boxGrid[(i+2)%3][j].checked){
-        gameOver(turn);
-      } else if(boxGrid[0][0].checked !==null && boxGrid[0][0].checked === boxGrid[1][1].checked && boxGrid[0][0].checked === boxGrid[2][2].checked){
-        gameOver(turn);
-      } else if(boxGrid[0][2].checked !==null && boxGrid[0][2].checked === boxGrid[1][1].checked && boxGrid[0][2].checked === boxGrid[2][0].checked){
+      
+      if(isGameOver(this)) {
         gameOver(turn);
       }
-      turn = (turn ==='O'?'X':'O');
+      turn = (turn === 'O' ? 'X' : 'O');
+    }
+
+    // checking if the row or column or diagonal is full and is the same symbol
+    function isGameOver(changedCell) {
+      if(changedCell.checked === boxGrid[i][(j + 1) % 3].checked && changedCell.checked === boxGrid[i][(j + 2) % 3].checked) {
+        return true;
+      } else if(changedCell.checked === boxGrid[(i + 1) % 3][j].checked && changedCell.checked === boxGrid[(i + 2) % 3][j].checked) {
+        return true;
+      } else if(boxGrid[0][0].checked !== null && boxGrid[0][0].checked === boxGrid[1][1].checked && boxGrid[0][0].checked === boxGrid[2][2].checked) {
+        return true;
+      } else if(boxGrid[0][2].checked !== null && boxGrid[0][2].checked === boxGrid[1][1].checked && boxGrid[0][2].checked === boxGrid[2][0].checked) {
+        return true;
+      }
+      return false;
     }
 
     function gameOver(symbol) {
