@@ -60,7 +60,7 @@ function initTic() {
   resetButton.addEventListener('click', reset);
   resetButton.addEventListener('click', initTic);
   tic.appendChild(resetButton);
-
+    
   // puts X or O on the cell when it's clicked
   function play() {
     //this represents the clicked div object
@@ -106,5 +106,13 @@ function initTic() {
     paper.remove();
   }
 }
- 
 
+// call function when all elements of the window are loaded
+window.addEventListener('load',getMessageFromServer);
+
+// adds message from server to html DOM using fetch()
+function getMessageFromServer() {
+  fetch('/data').then(response => response.text()).then(message => {
+    document.getElementById('message-container').innerHTML = message;
+  });
+}
