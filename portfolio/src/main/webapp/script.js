@@ -112,7 +112,13 @@ window.addEventListener('load',getMessageFromServer);
 
 // adds message from server to html DOM using fetch()
 function getMessageFromServer() {
-  fetch('/data').then(response => response.text()).then(message => {
-    document.getElementById('message-container').innerHTML = message;
+  fetch('/data').then(response => response.json()).then(messagesArray => {
+    let messageContainer = document.getElementById('message-container');
+    messagesArray.forEach(function(message) {
+      let listItem = document.createElement('li');
+      listItem.innerText = message;
+      messageContainer.appendChild(listItem);
+    });
+    
   });
 }
