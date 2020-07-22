@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -30,11 +31,15 @@
         <h2>Tic-Tac-Toe</h2>
         <button id="ticButton">Play</button>
       </div>
+      <h2>Comments</h2>
       <ul id="message-container"></ul>
       <form action="/data" method="POST">
-        <h2>Comments</h2>
         <textarea name="comment-input">Enter your comment here!</textarea>
         <input type="submit"/>
+      </form>
+      <form>
+        <p>Number of comments<br>Choose a number between 1 and 20<p>
+        <input id="number-of-comments" type="number" min="0" max="20" value="5"/>
       </form>
     </div>
   </body>
