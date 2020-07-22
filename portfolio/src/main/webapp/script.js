@@ -15,7 +15,13 @@
 /**
  * Adds a random greeting to the page.
  */
-document.getElementById("ticButton").addEventListener("click",initTic);
+
+window.addEventListener('load',function() {
+  document.getElementById('ticButton').addEventListener('click',initTic);
+  document.getElementById('number-of-comments').addEventListener('change',getMessageFromServer);
+  document.getElementById('delete-comments-button').addEventListener('click',clearComments);
+});
+
 function addRandomGreeting() {
   const greetings =
       ['Balabizo', 'Educated Noodle', 'That\'s rough buddy', 'YNWA'];
@@ -112,13 +118,19 @@ window.addEventListener('load',getMessageFromServer);
 
 // adds message from server to html DOM using fetch()
 function getMessageFromServer() {
-  fetch('/data').then(response => response.json()).then(messagesArray => {
+  let numberOfComments = document.getElementById('number-of-comments');
+  fetch('/data?numberOfComments='+numberOfComments.value).then(response => response.json()).then(messagesArray => {
     let messageContainer = document.getElementById('message-container');
+    messageContainer.innerHTML='';
     messagesArray.forEach(function(message) {
       let listItem = document.createElement('li');
       listItem.innerText = message;
       messageContainer.appendChild(listItem);
     });
-    
   });
+}
+
+function clearComments() {
+  let request = new Request('\delete-data',{method: 'Post'});
+  fetch(request).then(getMessageFromServer);
 }
