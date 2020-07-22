@@ -19,7 +19,7 @@
 window.addEventListener('load',function() {
   document.getElementById('ticButton').addEventListener('click',initTic);
   document.getElementById('number-of-comments').addEventListener('change',getMessageFromServer);
- 
+  document.getElementById('delete-comments-button').addEventListener('click',clearComments);
 });
 
 function addRandomGreeting() {
@@ -118,7 +118,6 @@ window.addEventListener('load',getMessageFromServer);
 
 // adds message from server to html DOM using fetch()
 function getMessageFromServer() {
-  
   let numberOfComments = document.getElementById('number-of-comments');
   fetch('/data?numberOfComments='+numberOfComments.value).then(response => response.json()).then(messagesArray => {
     let messageContainer = document.getElementById('message-container');
@@ -128,6 +127,10 @@ function getMessageFromServer() {
       listItem.innerText = message;
       messageContainer.appendChild(listItem);
     });
-    
   });
+}
+
+function clearComments() {
+  let request = new Request('\delete-data',{method: 'Post'});
+  fetch(request).then(getMessageFromServer);
 }
