@@ -1,0 +1,31 @@
+{
+  "name": "step",
+  "version": "1.0.0",
+  "description": "This repo contains the projects you'll work on for the first half of STEP. This work is based on the [Google Software Product Sprint](https://g.co/softwareproductsprint) program.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^7.5.0",
+    "eslint-config-google": "^0.14.0",
+    "htmllint-cli": "0.0.7",
+    "markdownlint": "^0.20.4",
+    "stylelint": "^13.6.1",
+    "stylelint-config-standard": "^20.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YahiaSherif28/step.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YahiaSherif28/step/issues"
+  },
+  "homepage": "https://github.com/YahiaSherif28/step#readme"
+}
