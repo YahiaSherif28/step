@@ -1,5 +1,4 @@
-teachme \
-    ~/step/walkthroughs/week-3-server/step-2-fetch-walkthrough.md# Intro to Servlets
+# Intro to Servlets
 
 ## Getting Started
 
