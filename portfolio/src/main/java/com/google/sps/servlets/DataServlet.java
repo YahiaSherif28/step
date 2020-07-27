@@ -20,6 +20,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,13 +32,12 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  ArrayList<String> messages = new ArrayList<String>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html;");
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    ArrayList<String> commentsArray = new ArrayList<String>();
+    ArrayList<Comment> commentsArray = new ArrayList<Comment>();
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     PreparedQuery results = datastore.prepare(query);
     int numberOfComments;
@@ -47,7 +48,9 @@ public class DataServlet extends HttpServlet {
     }
     for (Entity entity : results.asIterable()) {
       if (numberOfComments == 0) break;
-      commentsArray.add((String) (entity.getProperty("value")));
+      String value = (String) (entity.getProperty("value"));
+      String email = (String) (entity.getProperty("email"));
+      commentsArray.add(new Comment(value, email));
       numberOfComments--;
     }
     response.getWriter().println(new Gson().toJson(commentsArray));
@@ -59,6 +62,11 @@ public class DataServlet extends HttpServlet {
     Entity commentEnitity = new Entity("Comment");
     commentEnitity.setProperty("value", commentValue);
     commentEnitity.setProperty("timestamp", System.currentTimeMillis());
+
+    UserService userService = UserServiceFactory.getUserService();
+    String email = userService.getCurrentUser().getEmail();
+    commentEnitity.setProperty("email", email);
+
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEnitity);
     response.sendRedirect("/index.html");
@@ -67,5 +75,15 @@ public class DataServlet extends HttpServlet {
   public String getParameter(HttpServletRequest request, String parameter, String defaultValue) {
     String value = request.getParameter(parameter);
     return value == null ? defaultValue : value;
+  }
+
+  static class Comment {
+    String value;
+    String email;
+
+    public Comment(String value, String email) {
+      this.value = value;
+      this.email = email;
+    }
   }
 }

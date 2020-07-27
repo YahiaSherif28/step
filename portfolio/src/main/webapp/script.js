@@ -146,9 +146,9 @@ function getMessageFromServer() {
       .then((response) => response.json()).then((messagesArray) => {
         const messageContainer = document.getElementById('message-container');
         messageContainer.innerHTML = '';
-        messagesArray.forEach(function(message) {
+        messagesArray.forEach(function(comment) {
           const listItem = document.createElement('li');
-          listItem.innerText = message;
+          listItem.innerText = comment.email+': '+comment.value;
           messageContainer.appendChild(listItem);
         });
       });
