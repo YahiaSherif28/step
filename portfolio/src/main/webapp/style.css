@@ -13,8 +13,8 @@
   width: 300px;
 }
 
-#comments-div {
-    display: none;
+#comment-form {
+  display: none;
 }
 
 .paper {

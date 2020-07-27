@@ -21,7 +21,7 @@ window.addEventListener('load', function() {
       .addEventListener('click', clearComments);
   document.getElementById('greeting-button')
       .addEventListener('click', addRandomGreeting);
-  console.log(getLoginStatus());
+  getLoginStatus();
 });
 
 /**
@@ -160,19 +160,24 @@ function clearComments() {
 }
 /** Gets the login status*/
 function getLoginStatus() {
-  fetch('/login').then((response) => response.text())
-      .then((text) => {
-        return text === 'loggedIn';
-      })
-      .then((loggedIn) => {
-        processLoginStatus(loggedIn);
+  fetch('/login').then((response) => response.json())
+      .then((user) => {
+        processLoginStatus(user);
       });
 }
 /** processes the login status
- * @param {boolean} loggedIn
+ * @param {object} user
  */
-function processLoginStatus(loggedIn) {
-
+function processLoginStatus(user) {
+  console.log(JSON.stringify(user));
+  const loginMessage = document.createElement('a');
+  document.getElementById('login-message').appendChild(loginMessage);
+  loginMessage.href = user.link;
+  if (user.loggedIn) {
+    document.getElementById('comment-form').style.display = 'block';
+    loginMessage.innerHTML = 'Log out';
+  } else {
+    loginMessage.innerHTML = 'Log in to write a comment';
+  }
 }
-
 
