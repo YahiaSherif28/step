@@ -12,16 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
+window.addEventListener('load', function() {
+  document.getElementById('tic-button').addEventListener('click', initTic);
+  document.getElementById('number-of-comments')
+      .addEventListener('change', getMessageFromServer);
+  document.getElementById('delete-comments-button')
+      .addEventListener('click', clearComments);
+  document.getElementById('greeting-button')
+      .addEventListener('click', addRandomGreeting);
+  console.log(getLoginStatus());
+});
+
 /**
  * Adds a random greeting to the page.
  */
-
-window.addEventListener('load',function() {
-  document.getElementById('ticButton').addEventListener('click',initTic);
-  document.getElementById('number-of-comments').addEventListener('change',getMessageFromServer);
-  document.getElementById('delete-comments-button').addEventListener('click',clearComments);
-});
-
 function addRandomGreeting() {
   const greetings =
       ['Balabizo', 'Educated Noodle', 'That\'s rough buddy', 'YNWA'];
@@ -34,14 +39,16 @@ function addRandomGreeting() {
   greetingContainer.innerText = greeting;
 }
 
-// initializes the Tic-Tac-Toe Grid, triggered by both the play and reset buttons
+/** initialize the Tic-Tac-Toe Grid,
+ * triggered by both the play and reset buttons
+ */
 function initTic() {
   let turn = 'X';
-  let tic  = document.getElementById('tic');
-  let paper = document.createElement('div');
+  const tic = document.getElementById('tic');
+  const paper = document.createElement('div');
   paper.classList.add('paper');
   tic.appendChild(paper);
-  let boxGrid = [];
+  const boxGrid = [];
   let winnerMessage = null;
   let resetButton = null;
 
@@ -66,71 +73,106 @@ function initTic() {
   resetButton.addEventListener('click', reset);
   resetButton.addEventListener('click', initTic);
   tic.appendChild(resetButton);
-    
-  // puts X or O on the cell when it's clicked
+
+  /** puts X or O on the cell when it's clicked*/
   function play() {
-    //this represents the clicked div object
-    let i = this.myRow;
-    let j = this.myColumn;
-    
-    if(this.checked === null){
+    // this represents the clicked div object
+    const i = this.myRow;
+    const j = this.myColumn;
+
+    if (this.checked === null) {
       this.checked = turn;
       this.appendChild(document.createTextNode(turn));
-      
-      if(isGameOver(this)) {
+
+      if (isGameOver(this)) {
         gameOver(turn);
       }
       turn = (turn === 'O' ? 'X' : 'O');
     }
 
-    // checking if the row or column or diagonal is full and is the same symbol
+    /** checks if the row, column or diagonal is full and the same symbol
+      * @return {boolean}
+      * @param {object} changedCell Cell which changed to trigger the function
+      */
     function isGameOver(changedCell) {
-      if(changedCell.checked === boxGrid[i][(j + 1) % 3].checked && changedCell.checked === boxGrid[i][(j + 2) % 3].checked) {
+      if (changedCell.checked === boxGrid[i][(j + 1) % 3].checked &&
+          changedCell.checked === boxGrid[i][(j + 2) % 3].checked) {
         return true;
-      } else if(changedCell.checked === boxGrid[(i + 1) % 3][j].checked && changedCell.checked === boxGrid[(i + 2) % 3][j].checked) {
+      } else if (changedCell.checked === boxGrid[(i + 1) % 3][j].checked &&
+          changedCell.checked === boxGrid[(i + 2) % 3][j].checked) {
         return true;
-      } else if(boxGrid[0][0].checked !== null && boxGrid[0][0].checked === boxGrid[1][1].checked && boxGrid[0][0].checked === boxGrid[2][2].checked) {
+      } else if (boxGrid[0][0].checked !== null &&
+          boxGrid[0][0].checked === boxGrid[1][1].checked &&
+          boxGrid[0][0].checked === boxGrid[2][2].checked) {
         return true;
-      } else if(boxGrid[0][2].checked !== null && boxGrid[0][2].checked === boxGrid[1][1].checked && boxGrid[0][2].checked === boxGrid[2][0].checked) {
+      } else if (boxGrid[0][2].checked !== null &&
+          boxGrid[0][2].checked === boxGrid[1][1].checked &&
+          boxGrid[0][2].checked === boxGrid[2][0].checked) {
         return true;
       }
       return false;
     }
 
+    /** Displays winner message and removes the grid
+     *@param {string} symbol The symbol of the winner
+     */
     function gameOver(symbol) {
       paper.remove();
-      winnerMessage = document.createElement("p").appendChild(document.createTextNode(`The ${symbol} player wins`));
+      winnerMessage = document.createElement('p')
+          .appendChild(document.createTextNode(`The ${symbol} player wins`));
       tic.appendChild(winnerMessage);
     }
   }
-  
-  // removes the winner message and the grid to setup another turn, 
-  // reset button has another eventlistener calling the initTic function exactly after calling reset
+
+  /** removes the winner message and the grid to setup another turn,
+   * reset button has another eventlistener calling
+   * the initTic function exactly after calling reset
+   */
   function reset() {
-    if(winnerMessage !== null) 
+    if (winnerMessage !== null) {
       winnerMessage.remove();
+    }
     paper.remove();
   }
 }
 
 // call function when all elements of the window are loaded
-window.addEventListener('load',getMessageFromServer);
+window.addEventListener('load', getMessageFromServer);
 
-// adds message from server to html DOM using fetch()
+/** adds message from server to html DOM using fetch()*/
 function getMessageFromServer() {
-  let numberOfComments = document.getElementById('number-of-comments');
-  fetch('/data?numberOfComments='+numberOfComments.value).then(response => response.json()).then(messagesArray => {
-    let messageContainer = document.getElementById('message-container');
-    messageContainer.innerHTML='';
-    messagesArray.forEach(function(message) {
-      let listItem = document.createElement('li');
-      listItem.innerText = message;
-      messageContainer.appendChild(listItem);
-    });
-  });
+  const numberOfComments = document.getElementById('number-of-comments');
+  fetch('/data?numberOfComments='+numberOfComments.value)
+      .then((response) => response.json()).then((messagesArray) => {
+        const messageContainer = document.getElementById('message-container');
+        messageContainer.innerHTML = '';
+        messagesArray.forEach(function(message) {
+          const listItem = document.createElement('li');
+          listItem.innerText = message;
+          messageContainer.appendChild(listItem);
+        });
+      });
 }
-
+/** Clears all comments*/
 function clearComments() {
-  let request = new Request('\delete-data',{method: 'Post'});
+  const request = new Request('\delete-data', {method: 'Post'});
   fetch(request).then(getMessageFromServer);
 }
+/** Gets the login status*/
+function getLoginStatus() {
+  fetch('/login').then((response) => response.text())
+      .then((text) => {
+        return text === 'loggedIn';
+      })
+      .then((loggedIn) => {
+        processLoginStatus(loggedIn);
+      });
+}
+/** processes the login status
+ * @param {boolean} loggedIn
+ */
+function processLoginStatus(loggedIn) {
+
+}
+
+

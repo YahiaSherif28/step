@@ -8,6 +8,15 @@
   margin-top: 20px;
 }
 
+#myimg {
+  height: 300px;
+  width: 300px;
+}
+
+#comments-div {
+    display: none;
+}
+
 .paper {
   display: grid;
   grid-template-rows: 50px 50px 50px;
@@ -22,5 +31,5 @@
 }
 
 .box:hover {
-    background-color: green;
+  background-color: green;
 }

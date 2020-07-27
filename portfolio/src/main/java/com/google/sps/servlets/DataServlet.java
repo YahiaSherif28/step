@@ -21,13 +21,12 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
-import java.util.ArrayList;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
@@ -37,35 +36,35 @@ public class DataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html;");
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    ArrayList <String> commentsArray = new ArrayList<String>();
+    ArrayList<String> commentsArray = new ArrayList<String>();
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     PreparedQuery results = datastore.prepare(query);
     int numberOfComments;
     try {
-      numberOfComments = Integer.parseInt(getParameter(request,"numberOfComments","0"));
-    } catch(Exception e) {
+      numberOfComments = Integer.parseInt(getParameter(request, "numberOfComments", "0"));
+    } catch (Exception e) {
       numberOfComments = 0;
     }
-    for(Entity entity : results.asIterable()) {
-      if(numberOfComments == 0)
-        break;
-      commentsArray.add((String)(entity.getProperty("value")));
+    for (Entity entity : results.asIterable()) {
+      if (numberOfComments == 0) break;
+      commentsArray.add((String) (entity.getProperty("value")));
       numberOfComments--;
     }
     response.getWriter().println(new Gson().toJson(commentsArray));
   }
+
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
-    String commentValue = getParameter(request,"comment-input","");
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String commentValue = getParameter(request, "comment-input", "");
     Entity commentEnitity = new Entity("Comment");
-    commentEnitity.setProperty("value",commentValue);
-    commentEnitity.setProperty("timestamp",System.currentTimeMillis());
+    commentEnitity.setProperty("value", commentValue);
+    commentEnitity.setProperty("timestamp", System.currentTimeMillis());
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEnitity);
     response.sendRedirect("/index.html");
   }
 
-  public String getParameter (HttpServletRequest request, String parameter, String defaultValue) {
+  public String getParameter(HttpServletRequest request, String parameter, String defaultValue) {
     String value = request.getParameter(parameter);
     return value == null ? defaultValue : value;
   }
