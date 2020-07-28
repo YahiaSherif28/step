@@ -153,20 +153,29 @@ function getMessageFromServer() {
         });
       });
 }
-/** Clears all comments*/
+/** Clears all comments by removing them from the datastore*/
 function clearComments() {
   const request = new Request('\delete-data', {method: 'Post'});
   fetch(request).then(getMessageFromServer);
 }
-/** Gets the login status*/
+/** Gets the user object from the server which
+ * contains a boolean loggedIn,
+ * a String for email if it's logged in and a link which is either a login
+ * link if user is logged out or and logout link if user is logged in ,
+ * the link redirects to "/"
+ * and then calls processLoginStatus
+ * to determine whether the comments form is shown or hidden
+ */
 function getLoginStatus() {
   fetch('/login').then((response) => response.json())
       .then((user) => {
         processLoginStatus(user);
       });
 }
-/** processes the login status
- * @param {object} user
+/** takes user as input and if it's logged in shows the comments form
+ * and a logout link
+ * else it shows a login link
+ * @param {object} user The user object from getLoginStatus
  */
 function processLoginStatus(user) {
   console.log(JSON.stringify(user));

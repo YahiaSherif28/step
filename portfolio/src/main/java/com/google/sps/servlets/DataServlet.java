@@ -35,7 +35,7 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
+    response.setContentType("application/json;");
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     ArrayList<Comment> commentsArray = new ArrayList<Comment>();
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
@@ -77,7 +77,7 @@ public class DataServlet extends HttpServlet {
     return value == null ? defaultValue : value;
   }
 
-  static class Comment {
+  private class Comment {
     String value;
     String email;
 
