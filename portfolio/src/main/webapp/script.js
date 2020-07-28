@@ -21,7 +21,9 @@ window.addEventListener('load', function() {
       .addEventListener('click', clearComments);
   document.getElementById('greeting-button')
       .addEventListener('click', addRandomGreeting);
+  createMap();    
   getLoginStatus();
+
 });
 
 /**
@@ -188,5 +190,12 @@ function processLoginStatus(user) {
   } else {
     loginMessage.innerHTML = 'Log in to write a comment';
   }
+}
+
+/**Creates map and adds it to the page */
+function createMap() {
+  const map = new google.maps.Map(
+      document.getElementById('map'),
+      {center: {lat: 37.422, lng: -122.084}, zoom: 16});
 }
 
