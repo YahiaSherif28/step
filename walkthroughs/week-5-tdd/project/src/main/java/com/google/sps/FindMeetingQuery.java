@@ -25,9 +25,9 @@ public final class FindMeetingQuery {
     boolean[] timeIsOccupied = new boolean[TimeRange.END_OF_DAY + 1];
     Collection<String> requestAttendees = request.getAttendees();
 
-    for(Event event : events) {
+    for (Event event : events) {
       Set<String> eventAttendees = event.getAttendees();
-      for(String s : requestAttendees) {
+      for (String s : requestAttendees) {
         // if someone in our request is in this event,
         // make the range of the event [start,end) true in the timeIsOccupied[]
         if (eventAttendees.contains(s)) {
@@ -41,11 +41,11 @@ public final class FindMeetingQuery {
     }
     return findResultOfQuery(timeIsOccupied, request.getDuration());
   }
-  /** 
+  /**
    * finds continous intervals of false in timeIsOcuppied[] with lengths greater than or equal to
    * durationOfRequest and returns them as a Collection<TimeRange>
    */
-  private Collection<TimeRange> findResultOfQuery (
+  private Collection<TimeRange> findResultOfQuery(
       boolean[] timeIsOccupied, long durationOfRequest) {
     Collection<TimeRange> result = new ArrayList<TimeRange>();
     int start = 0;
