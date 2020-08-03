@@ -26,10 +26,10 @@ public final class FindMeetingQuery {
 
     for (Event event : events) {
       Set<String> eventAttendees = event.getAttendees();
-      for (String s : requestAttendees) {
+      for (String requestAttendee : requestAttendees) {
         // if someone in our request is in this event,
         // make the range of the event [start,end) true in the timeIsOccupied[]
-        if (eventAttendees.contains(s)) {
+        if (eventAttendees.contains(requestAttendee)) {
           TimeRange eventRange = event.getWhen();
           for (int i = eventRange.start(); i < eventRange.end(); ++i) {
             timeIsOccupied[i] = true;
@@ -38,8 +38,37 @@ public final class FindMeetingQuery {
         }
       }
     }
-    return findResultOfQuery(timeIsOccupied, request.getDuration());
+    // // timeIsOccupiedWithOptional is true if someone in the request attendees
+    // // or the optional attendees has an event in that moment
+    boolean[] timeIsOccupiedWithOptional = timeIsOccupied.clone();
+
+    Collection<String> requestOptionalAttendees = request.getOptionalAttendees();
+    for (Event event : events) {
+      Set<String> eventAttendees = event.getAttendees();
+      for (String optionalAttendee : requestOptionalAttendees) {
+        // if someone in our request is in this event,
+        // make the range of the event [start,end) true in the timeIsOccupiedWithOptional[]
+        if (eventAttendees.contains(optionalAttendee)) {
+          TimeRange eventRange = event.getWhen();
+          for (int i = eventRange.start(); i < eventRange.end(); ++i) {
+            timeIsOccupiedWithOptional[i] = true;
+          }
+          break;
+        }
+      }
+    }
+    // TimeRanges if we include the optional attendees
+    Collection<TimeRange> resultWithOptional =
+        findResultOfQuery(timeIsOccupiedWithOptional, request.getDuration());
+    // return the timeranges that include the optional if there is any
+    // otherwise return the time ranges which only include the mandatory
+    if (resultWithOptional.isEmpty()) {
+      return findResultOfQuery(timeIsOccupied, request.getDuration());
+    } else {
+      return resultWithOptional;
+    }
   }
+
   /**
    * finds continous intervals of false in timeIsOcuppied[] with lengths greater than or equal to
    * durationOfRequest and returns them as a Collection<TimeRange>
@@ -50,31 +79,32 @@ public final class FindMeetingQuery {
     int start = 0;
     int end = 1;
     while (end < timeIsOccupied.length) {
-      // if start is occupied move forward to search for a valid start
       if (timeIsOccupied[start]) {
+        // if start is occupied move forward to search for a valid start
         start++;
         end = start + 1;
+      } else if (timeIsOccupied[end]) {
         // start is not occupied (valid) but end is occupied
         // meaning that there is range of falses [start,end)
-      } else if (timeIsOccupied[end]) {
-        TimeRange validRange = TimeRange.fromStartEnd(start, end, false);
+        TimeRange validRange = TimeRange.fromStartEnd(start, end, /*inclusive=*/ false);
         // check that the duration of the range found is enough for the request
         if (durationOfRequest <= validRange.duration()) {
           result.add(validRange);
         }
         start = end + 1;
         end = start + 1;
+      } else {
         // !timeIsOccupied[start] && !timeIsOccupied[end]
         // start is not occupied (valid) and
         // we haven't reached the end of the interval yet
-      } else {
         end++;
       }
     }
     // To handle the case when a suffix of the array is false,
     // range [start,timeIsOccupied.length) is all false
     if (!timeIsOccupied[timeIsOccupied.length - 1]) {
-      TimeRange validRange = TimeRange.fromStartEnd(start, timeIsOccupied.length, false);
+      TimeRange validRange =
+          TimeRange.fromStartEnd(start, timeIsOccupied.length, /*inclusive=*/ false);
       if (durationOfRequest <= validRange.duration()) {
         result.add(validRange);
       }
