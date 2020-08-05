@@ -159,13 +159,8 @@ function clearComments() {
   const request = new Request('\delete-data', {method: 'Post'});
   fetch(request).then(getMessageFromServer);
 }
-/** Gets the user object from the server which
- * contains a boolean loggedIn,
- * a String for email if it's logged in and a link which is either a login
- * link if user is logged out or and logout link if user is logged in ,
- * the link redirects to "/"
- * and then calls processLoginStatus
- * to determine whether the comments form is shown or hidden
+/** Gets JSON object 'user' by calling fetch on '/login'
+ * then passes it to processLoginStatus
  */
 function getLoginStatus() {
   fetch('/login').then((response) => response.json())
@@ -176,7 +171,8 @@ function getLoginStatus() {
 /** takes user as input and if it's logged in shows the comments form
  * and a logout link
  * else it shows a login link
- * @param {object} user The user object from getLoginStatus
+ * @param {object} user JSON object which contains info about the user.
+ * See LoginStatusServlet.java for more info about the object
  */
 function processLoginStatus(user) {
   console.log(JSON.stringify(user));
@@ -191,10 +187,17 @@ function processLoginStatus(user) {
   }
 }
 
-/** Creates map and adds it to the page */
+/** Creates map and adds it to the page and adds a bouncing marker to it */
 function createMap() {
-  new google.maps.Map(
+  const position = {lat: 29.987535, lng: 31.441335};
+  const map = new google.maps.Map(
       document.getElementById('map'),
-      {center: {lat: 37.422, lng: -122.084}, zoom: 16});
+      {center: position, zoom: 16});
+  new google.maps.Marker({
+    position: position,
+    map: map,
+    title: 'GUC',
+    animation: google.maps.Animation.BOUNCE,
+  });
 }
 
